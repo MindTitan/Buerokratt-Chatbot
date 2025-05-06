@@ -20,7 +20,10 @@ WITH latest_idle_chats AS (
         received_from,
         received_from_name,
         external_id,
-        csa_title,
+        CASE
+            WHEN :is_csa_title_visible = 'true' THEN csa_title
+            ELSE ''
+        END AS csa_title,
         contacts_message
     FROM denormalized_chat
     ORDER BY chat_id, id DESC

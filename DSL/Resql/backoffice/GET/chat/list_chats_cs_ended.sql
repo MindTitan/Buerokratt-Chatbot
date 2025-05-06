@@ -29,7 +29,10 @@ WITH latest_chat_records AS (
         feedback_text,
         feedback_rating,
         nps,
-        csa_title,
+        CASE
+            WHEN :is_csa_title_visible = 'true' THEN csa_title
+            ELSE ''
+        END AS csa_title
         last_message_event
     FROM
         denormalized_chat
@@ -78,10 +81,7 @@ SELECT
     feedback_text,
     feedback_rating,
     nps,
-    CASE
-        WHEN :is_csa_title_visible = 'true' THEN c.csa_title
-        ELSE ''
-    END AS csa_title,
+    csa_title,
     last_message_event,
     CEIL(COUNT(*) OVER () / 10 :: DECIMAL) AS total_pages
 FROM

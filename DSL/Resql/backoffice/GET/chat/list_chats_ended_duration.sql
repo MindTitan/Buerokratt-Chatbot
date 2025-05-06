@@ -9,6 +9,6 @@ FROM (
         ended IS NOT NULL
         AND ended > (NOW() - '1 month'::INTERVAL)
         AND customer_support_id <> ''
-        AND is_bot = FALSE
+        AND customer_support_id <> :bot_institution_id
     ORDER BY chat_id, id DESC
 ) latest_chats;
