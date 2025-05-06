@@ -56,7 +56,7 @@ SELECT
 FROM latest_chat_versions
 WHERE 
     ended IS NULL 
-    AND is_bot = FALSE
+    AND customer_support_id <> :bot_institution_id
     AND status <> 'VALIDATING'
 ORDER BY created ASC
 LIMIT :limit::INTEGER;

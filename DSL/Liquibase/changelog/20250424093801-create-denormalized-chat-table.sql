@@ -45,7 +45,6 @@ CREATE TABLE denormalized_chat (
     last_message_event character varying,
     last_message_event_with_content character varying,
     chat_duration_in_seconds numeric,
-    is_bot boolean,
     created_at timestamp with time zone NOT NULL DEFAULT now(),
     customer_messages_count integer,
     CONSTRAINT denormalized_chat_pkey PRIMARY KEY (id)
@@ -98,7 +97,6 @@ INSERT INTO denormalized_chat (
     last_message_event,
     last_message_event_with_content,
     chat_duration_in_seconds,
-    is_bot,
     customer_messages_count
 )
 WITH combined_records AS (
@@ -147,7 +145,6 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        NULL AS is_csa_title_visible,
         chc.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -158,9 +155,7 @@ WITH combined_records AS (
             WHEN fsm.first_support_timestamp IS NOT NULL AND lm.last_timestamp IS NOT NULL
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
-        END AS duration_seconds,
-        FALSE AS is_bot,
-        NULL AS bot_institution_id
+        END AS duration_seconds
     FROM
         chat_history_comments AS chc
     LEFT JOIN LATERAL (
@@ -326,7 +321,6 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        NULL AS is_csa_title_visible,
         c.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -337,9 +331,7 @@ WITH combined_records AS (
             WHEN fsm.first_support_timestamp IS NOT NULL AND lm.last_timestamp IS NOT NULL
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
-        END AS duration_seconds,
-        FALSE AS is_bot,
-        NULL AS bot_institution_id
+        END AS duration_seconds
     FROM
         chat AS c
     LEFT JOIN LATERAL (
@@ -516,7 +508,6 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        NULL AS is_csa_title_visible,
         m.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -527,9 +518,7 @@ WITH combined_records AS (
             WHEN fsm.first_support_timestamp IS NOT NULL AND lm.last_timestamp IS NOT NULL
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
-        END AS duration_seconds,
-        FALSE AS is_bot,
-        NULL AS bot_institution_id
+        END AS duration_seconds
     FROM
         message AS m
     LEFT JOIN LATERAL (
@@ -684,7 +673,6 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        NULL AS is_csa_title_visible,
         u.created,
         CASE
             WHEN u.id_code = m.max_msg_author_id THEN u.display_name
@@ -714,9 +702,7 @@ WITH combined_records AS (
             WHEN fsm.first_support_timestamp IS NOT NULL AND lm.last_timestamp IS NOT NULL
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
-        END AS duration_seconds,
-        FALSE AS is_bot,
-        NULL AS bot_institution_id
+        END AS duration_seconds
     FROM
         "user" AS u
     LEFT JOIN LATERAL (
@@ -924,7 +910,6 @@ SELECT
         ELSE LOWER(last_message_event_with_content)
     END AS last_message_event_with_content,
     duration_seconds AS chat_duration_in_seconds,
-    is_bot,
     customer_messages_count
 FROM combined_records
 CROSS JOIN nps_calc
