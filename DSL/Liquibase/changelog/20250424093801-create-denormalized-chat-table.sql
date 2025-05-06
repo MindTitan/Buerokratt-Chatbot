@@ -147,7 +147,7 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        config.is_csa_title_visible,
+        NULL AS is_csa_title_visible,
         chc.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -159,11 +159,8 @@ WITH combined_records AS (
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
         END AS duration_seconds,
-        CASE
-            WHEN c.customer_support_id = bot_config.bot_institution_id THEN TRUE
-            ELSE FALSE
-        END AS is_bot,
-        bot_config.bot_institution_id
+        FALSE AS is_bot,
+        NULL AS bot_institution_id
     FROM
         chat_history_comments AS chc
     LEFT JOIN LATERAL (
@@ -235,16 +232,6 @@ WITH combined_records AS (
         LIMIT 1
     ) AS cm ON TRUE
     LEFT JOIN LATERAL (
-        SELECT value AS is_csa_title_visible
-        FROM configuration
-        WHERE
-            key = 'is_csa_title_visible'
-            AND NOT deleted
-            AND (created <= chc.created OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS config ON TRUE
-    LEFT JOIN LATERAL (
         SELECT
             first_name,
             last_name
@@ -284,16 +271,6 @@ WITH combined_records AS (
             AND created <= chc.created
         GROUP BY chat_base_id
     ) AS lm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT value AS bot_institution_id
-        FROM configuration
-        WHERE
-            key = 'bot_institution_id'
-            AND NOT deleted
-            AND (created <= chc.created OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS bot_config ON TRUE
     WHERE c.base_id IS NOT NULL
     AND NOT EXISTS (
         SELECT 1
@@ -349,7 +326,7 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        config.is_csa_title_visible,
+        NULL AS is_csa_title_visible,
         c.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -361,11 +338,8 @@ WITH combined_records AS (
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
         END AS duration_seconds,
-        CASE
-            WHEN c.customer_support_id = bot_config.bot_institution_id THEN TRUE
-            ELSE FALSE
-        END AS is_bot,
-        bot_config.bot_institution_id
+        FALSE AS is_bot,
+        NULL AS bot_institution_id
     FROM
         chat AS c
     LEFT JOIN LATERAL (
@@ -437,16 +411,6 @@ WITH combined_records AS (
         LIMIT 1
     ) AS cm ON TRUE
     LEFT JOIN LATERAL (
-        SELECT value AS is_csa_title_visible
-        FROM configuration
-        WHERE
-            key = 'is_csa_title_visible'
-            AND NOT deleted
-            AND (created <= c.updated OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS config ON TRUE
-    LEFT JOIN LATERAL (
         SELECT
             first_name,
             last_name
@@ -486,16 +450,6 @@ WITH combined_records AS (
             AND created <= c.updated
         GROUP BY chat_base_id
     ) AS lm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT value AS bot_institution_id
-        FROM configuration
-        WHERE
-            key = 'bot_institution_id'
-            AND NOT deleted
-            AND (created <= c.updated OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS bot_config ON TRUE
     WHERE NOT EXISTS (
         SELECT 1
         FROM chat_history_comments AS chc
@@ -562,7 +516,7 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        config.is_csa_title_visible,
+        NULL AS is_csa_title_visible,
         m.created,
         mu.display_name AS user_display_name,
         mu.status AS user_status,
@@ -574,11 +528,8 @@ WITH combined_records AS (
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
         END AS duration_seconds,
-        CASE
-            WHEN c.customer_support_id = bot_config.bot_institution_id THEN TRUE
-            ELSE FALSE
-        END AS is_bot,
-        bot_config.bot_institution_id
+        FALSE AS is_bot,
+        NULL AS bot_institution_id
     FROM
         message AS m
     LEFT JOIN LATERAL (
@@ -634,16 +585,6 @@ WITH combined_records AS (
         LIMIT 1
     ) AS cm ON TRUE
     LEFT JOIN LATERAL (
-        SELECT value AS is_csa_title_visible
-        FROM configuration
-        WHERE
-            key = 'is_csa_title_visible'
-            AND NOT deleted
-            AND (created <= m.updated OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS config ON TRUE
-    LEFT JOIN LATERAL (
         SELECT
             first_name,
             last_name
@@ -683,16 +624,6 @@ WITH combined_records AS (
             AND updated <= m.updated
         GROUP BY chat_base_id
     ) AS lm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT value AS bot_institution_id
-        FROM configuration
-        WHERE
-            key = 'bot_institution_id'
-            AND NOT deleted
-            AND (created <= m.updated OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS bot_config ON TRUE
     WHERE c.base_id IS NOT NULL
     AND NOT EXISTS (
         SELECT 1
@@ -753,7 +684,7 @@ WITH combined_records AS (
         c.created AS chat_created,
         c.feedback_text,
         c.feedback_rating,
-        config.is_csa_title_visible,
+        NULL AS is_csa_title_visible,
         u.created,
         CASE
             WHEN u.id_code = m.max_msg_author_id THEN u.display_name
@@ -784,11 +715,8 @@ WITH combined_records AS (
             THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
             ELSE NULL
         END AS duration_seconds,
-        CASE
-            WHEN c.customer_support_id = bot_config.bot_institution_id THEN TRUE
-            ELSE FALSE
-        END AS is_bot,
-        bot_config.bot_institution_id
+        FALSE AS is_bot,
+        NULL AS bot_institution_id
     FROM
         "user" AS u
     LEFT JOIN LATERAL (
@@ -868,16 +796,6 @@ WITH combined_records AS (
         LIMIT 1
     ) AS cm ON TRUE
     LEFT JOIN LATERAL (
-        SELECT value AS is_csa_title_visible
-        FROM configuration
-        WHERE
-            key = 'is_csa_title_visible'
-            AND NOT deleted
-            AND (created <= u.created OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS config ON TRUE
-    LEFT JOIN LATERAL (
         SELECT
             first_name, last_name, display_name, status
         FROM "user" AS mu
@@ -908,16 +826,6 @@ WITH combined_records AS (
             AND created <= u.created
         GROUP BY chat_base_id
     ) AS lm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT value AS bot_institution_id
-        FROM configuration
-        WHERE
-            key = 'bot_institution_id'
-            AND NOT deleted
-            AND (created <= u.created OR created IS NULL)
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS bot_config ON TRUE
     WHERE c.base_id IS NOT NULL
     AND NOT EXISTS (
         SELECT 1
@@ -936,266 +844,6 @@ WITH combined_records AS (
         FROM message AS mx
         WHERE mx.chat_base_id = c.base_id
         AND mx.created = u.created
-    )
-),
--- Configuration changes processing
-config_changes AS (
-    SELECT
-        config.id,
-        config.created,
-        config.key,
-        config.value
-    FROM configuration AS config
-    WHERE NOT config.deleted
-    AND (config.key = 'is_csa_title_visible' OR config.key = 'bot_institution_id')
-),
-active_chats_at_config_changes AS (
-    SELECT
-        cc.created AS config_timestamp,
-        cc.key AS config_key,
-        cc.value AS config_value,
-        c.base_id AS chat_id
-    FROM config_changes AS cc
-    CROSS JOIN (
-        SELECT DISTINCT c.base_id, c.created, c.ended
-        FROM chat AS c
-    ) AS c
-    WHERE
-        c.created <= cc.created
-        AND (c.ended IS NULL OR c.ended > cc.created)
-),
-config_records AS (
-    SELECT
-        acc.config_timestamp AS record_date,
-        chc_latest.id AS chat_history_id,
-        acc.chat_id,
-        chc_latest.comment,
-        chc_latest.created AS comment_added_date,
-        chc_latest.author_display_name AS comment_author,
-        m.min_id,
-        m.max_id,
-        m.first_message_content,
-        m.max_msg_updated AS last_message_timestamp,
-        m.max_msg_event AS last_message_event,
-        m.max_msg_event_with_content AS last_message_event_with_content,
-        m.last_message_content,
-        m.last_message_including_empty_content,
-        m.customer_messages_count,
-        cm.contact_message_content,
-        c.customer_support_id,
-        m.max_msg_author_id AS author_id,
-        c.customer_support_display_name,
-        cu.first_name AS customer_support_first_name,
-        cu.last_name AS customer_support_last_name,
-        c.csa_title,
-        c.end_user_id,
-        c.end_user_first_name,
-        c.end_user_last_name,
-        c.end_user_email,
-        c.end_user_phone,
-        c.end_user_os,
-        c.end_user_url,
-        c.status,
-        c.updated AS chat_updated,
-        c.ended,
-        c.forwarded_to,
-        c.forwarded_to_name,
-        c.received_from,
-        c.received_from_name,
-        c.external_id,
-        c.labels,
-        m.first_message_timestamp AS first_message_timestamp,
-        c.created AS chat_created,
-        c.feedback_text,
-        c.feedback_rating,
-        CASE
-            WHEN acc.config_key = 'is_csa_title_visible' THEN acc.config_value
-            ELSE csa_config.value
-        END AS is_csa_title_visible,
-        acc.config_timestamp AS created,
-        mu.display_name AS user_display_name,
-        mu.status AS user_status,
-        COALESCE(m.author_first_name, mu.first_name, mu.display_name) AS author_first_name,
-        COALESCE(m.author_last_name, mu.last_name) AS author_last_name,
-        fsm.first_support_timestamp,
-        CASE
-            WHEN fsm.first_support_timestamp IS NOT NULL AND lm.last_timestamp IS NOT NULL
-            THEN ABS(EXTRACT(EPOCH FROM (fsm.first_support_timestamp - lm.last_timestamp)))
-            ELSE NULL
-        END AS duration_seconds,
-        CASE
-            WHEN c.customer_support_id = CASE
-                                            WHEN acc.config_key = 'bot_institution_id' THEN acc.config_value
-                                            ELSE bot_config.value
-                                         END THEN TRUE
-            ELSE FALSE
-        END AS is_bot,
-        CASE
-            WHEN acc.config_key = 'bot_institution_id' THEN acc.config_value
-            ELSE bot_config.value
-        END AS bot_institution_id
-    FROM active_chats_at_config_changes AS acc
-    LEFT JOIN LATERAL (
-        SELECT *
-        FROM chat AS c
-        WHERE c.base_id = acc.chat_id
-        AND c.updated <= acc.config_timestamp
-        ORDER BY c.updated DESC
-        LIMIT 1
-    ) AS c ON true
-    LEFT JOIN LATERAL (
-        SELECT *
-        FROM chat_history_comments AS chc
-        WHERE chc.chat_id = acc.chat_id
-        AND chc.created <= acc.config_timestamp
-        ORDER BY chc.created DESC
-        LIMIT 1
-    ) AS chc_latest ON true
-    LEFT JOIN LATERAL (
-        WITH content_message_bounds AS (
-            SELECT
-                MAX(id) AS max_content_id,
-                MIN(id) AS min_content_id
-            FROM message AS m
-            WHERE
-                m.chat_base_id = acc.chat_id
-                AND m.updated <= acc.config_timestamp
-                AND content <> ''
-                AND content <> 'message-read'
-        ),
-        all_message_bounds AS (
-            SELECT
-                MAX(id) AS max_id
-            FROM message AS m
-            WHERE
-                m.chat_base_id = acc.chat_id
-                AND m.updated <= acc.config_timestamp
-        ),
-        customer_messages_count AS (
-            SELECT COUNT(inner_m.id) AS customer_messages_count
-            FROM message AS inner_m
-            WHERE
-                inner_m.chat_base_id = acc.chat_id
-                AND inner_m.author_role = 'end-user'
-                AND (inner_m.event = '' OR inner_m.event IS NULL)
-                AND inner_m.updated <= acc.config_timestamp
-        )
-        SELECT
-            cmb.min_content_id AS min_id,
-            cmb.max_content_id AS max_id,
-            min_msg.content AS first_message_content,
-            min_msg.created AS first_message_timestamp,
-            max_content_msg.content AS last_message_content,
-            max_msg.content AS last_message_including_empty_content,
-            max_msg.updated AS max_msg_updated,
-            max_msg.event AS max_msg_event,
-            max_content_msg.event AS max_msg_event_with_content,
-            max_msg.author_id AS max_msg_author_id,
-            max_msg.author_first_name AS author_first_name,
-            max_msg.author_last_name AS author_last_name,
-            cmc.customer_messages_count
-        FROM content_message_bounds AS cmb
-        CROSS JOIN all_message_bounds AS amb
-        CROSS JOIN customer_messages_count AS cmc
-        LEFT JOIN message AS min_msg ON min_msg.id = cmb.min_content_id
-        LEFT JOIN message AS max_content_msg ON max_content_msg.id = cmb.max_content_id
-        LEFT JOIN message AS max_msg ON max_msg.id = amb.max_id
-    ) AS m ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT
-            m.content AS contact_message_content
-        FROM message AS m
-        WHERE m.chat_base_id = acc.chat_id
-        AND m.event = 'contact-information-fulfilled'
-        AND m.updated <= acc.config_timestamp
-        ORDER BY m.id DESC
-        LIMIT 1
-    ) AS cm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT
-            first_name,
-            last_name
-        FROM "user" AS u
-        WHERE u.id_code = c.customer_support_id
-        AND u.created <= acc.config_timestamp
-        ORDER BY u.created DESC
-        LIMIT 1
-    ) AS cu ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT
-            first_name, last_name, display_name, status
-        FROM "user" AS u
-        WHERE u.id_code = m.max_msg_author_id
-        AND u.created <= acc.config_timestamp
-        ORDER BY u.created DESC
-        LIMIT 1
-    ) AS mu ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT
-            chat_base_id,
-            MIN(author_timestamp) AS first_support_timestamp
-        FROM message
-        WHERE
-            chat_base_id = acc.chat_id
-            AND author_role = 'backoffice-user'
-            AND created <= acc.config_timestamp
-        GROUP BY chat_base_id
-    ) AS fsm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT
-            chat_base_id,
-            MAX(author_timestamp) AS last_timestamp
-        FROM message
-        WHERE
-            chat_base_id = acc.chat_id
-            AND created <= acc.config_timestamp
-        GROUP BY chat_base_id
-    ) AS lm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT value
-        FROM configuration
-        WHERE
-            key = 'bot_institution_id'
-            AND NOT deleted
-            AND (created <= acc.config_timestamp OR created IS NULL)
-            AND key <> acc.config_key
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS bot_config ON acc.config_key <> 'bot_institution_id'
-    LEFT JOIN LATERAL (
-        SELECT value
-        FROM configuration
-        WHERE
-            key = 'is_csa_title_visible'
-            AND NOT deleted
-            AND (created <= acc.config_timestamp OR created IS NULL)
-            AND key <> acc.config_key
-        ORDER BY id DESC
-        LIMIT 1
-    ) AS csa_config ON acc.config_key <> 'is_csa_title_visible'
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM chat_history_comments AS chc
-        WHERE chc.chat_id = acc.chat_id
-        AND chc.created = acc.config_timestamp
-    )
-    AND NOT EXISTS (
-        SELECT 1
-        FROM chat AS cx
-        WHERE cx.base_id = acc.chat_id
-        AND cx.updated = acc.config_timestamp
-    )
-    AND NOT EXISTS (
-        SELECT 1
-        FROM message AS mx
-        WHERE mx.chat_base_id = acc.chat_id
-        AND mx.created = acc.config_timestamp
-    )
-    AND NOT EXISTS (
-        SELECT 1
-        FROM "user" AS ux
-        WHERE ux.id_code = c.customer_support_id
-        AND ux.created = acc.config_timestamp
     )
 ),
 -- NPS calculation done once at the end
@@ -1225,7 +873,7 @@ nps_calc AS (
     CROSS JOIN promoters
     CROSS JOIN detractors
 )
--- Combine the original record and the configuration records
+-- Select the final result
 SELECT
     chat_id,
     customer_support_id,
@@ -1266,10 +914,7 @@ SELECT
     feedback_text,
     feedback_rating,
     (SELECT nps_value FROM nps_calc) AS nps,
-    CASE
-        WHEN is_csa_title_visible = 'true' THEN csa_title
-        ELSE ''
-    END AS csa_title,
+    csa_title,
     CASE
         WHEN last_message_event IS NULL THEN NULL
         ELSE LOWER(last_message_event)
@@ -1281,11 +926,7 @@ SELECT
     duration_seconds AS chat_duration_in_seconds,
     is_bot,
     customer_messages_count
-FROM (
-    SELECT * FROM combined_records
-    UNION ALL
-    SELECT * FROM config_records
-) AS all_records
+FROM combined_records
 CROSS JOIN nps_calc
 WHERE chat_id IN (SELECT base_id FROM chat)
 ORDER BY denormalized_record_created;
