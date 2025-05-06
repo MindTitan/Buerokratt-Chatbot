@@ -48,8 +48,11 @@ SELECT
         LIMIT 1
     ) AS last_message_timestamp,
     last_message_event_with_content,
-    csa_title
-    
+    CASE
+        WHEN :is_csa_title_visible = 'true' THEN csa_title
+        ELSE ''
+    END AS csa_title
+
 FROM latest_chat_versions
 WHERE 
     ended IS NULL 
