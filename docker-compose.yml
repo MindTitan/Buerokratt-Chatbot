@@ -121,7 +121,7 @@ services:
     ports:
       - 8082:8082
     volumes:
-      - ./DSL/Resql:/DSL
+      - ./DSL/Resql:/workspace/app/templates
     networks:
       - bykstack
 
