@@ -52,7 +52,7 @@ getChatNps:
 getUsers:
   call: http.get
   args:
-    url: "[#CHATBOT_RESQL]/auth_users/list_users_display_name"
+    url: "[#CHATBOT_RESQL]/auth_users/list_users_names"
   result: users
 
 getEndedChats:

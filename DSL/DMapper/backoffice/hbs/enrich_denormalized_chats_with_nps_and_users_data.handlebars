@@ -8,14 +8,30 @@
       "nps": {{../nps}},
       {{#if ../users}}
         {{#if (eq this.lastMessageAuthorId null)}}
-          "userDisplayName": null
+          "userDisplayName": null,
         {{else}}
-        {{#if (eq (getObjectKeyFromObjectArray ../users "idCode" this.lastMessageAuthorId "displayName") null) }}
-          "userDisplayName": null
-          {{else}}
-          "userDisplayName": "{{getObjectKeyFromObjectArray ../users "idCode" this.lastMessageAuthorId "displayName"}}"
+          {{#if (eq (getObjectKeyFromObjectArray ../users "idCode" this.lastMessageAuthorId "displayName") null) }}
+            "userDisplayName": null,
+            {{else}}
+            "userDisplayName": "{{getObjectKeyFromObjectArray ../users "idCode" this.lastMessageAuthorId "displayName"}}",
+          {{/if}}
         {{/if}}
-        {{/if}}
+
+        {{#if (eq this.customerSupportId null)}}
+          "customerSupportFirstName": null,
+          "customerSupportLastName": null
+        {{else}}
+          {{#if (eq (getObjectKeyFromObjectArray ../users "idCode" this.customerSupportId "firstName") null) }}
+            "customerSupportFirstName": null,
+            {{else}}
+            "customerSupportFirstName": "{{getObjectKeyFromObjectArray ../users "idCode" this.customerSupportId "firstName"}}",
+          {{/if}}
+          {{#if (eq (getObjectKeyFromObjectArray ../users "idCode" this.customerSupportId "lastName") null) }}
+            "customerSupportLastName": null
+            {{else}}
+            "customerSupportLastName": "{{getObjectKeyFromObjectArray ../users "idCode" this.customerSupportId "firstName"}}"
+          {{/if}}
+        {{/if}}  
       {{/if}}
     }{{#unless @last}},{{/unless}}
   {{/each}}
